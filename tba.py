@@ -3,8 +3,7 @@
 import sys, dfa
 
 def main():
-    print("Halo, dunia!")
-    dfa.matches(sys.stdin.read())
+    print(dfa.matches(sys.stdin.read().strip()))
 
 if __name__ == "__main__":
     main()
