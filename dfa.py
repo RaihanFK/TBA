@@ -25,10 +25,11 @@ table: list[dict[str, int]] = [
     }
 ]
 
+initial_state = 0
 final_states = [1]
 
 def matches(string: str) -> bool:
-    state = 0
+    state = initial_state
 
     for ch in string:
         if ch not in table[state]:
