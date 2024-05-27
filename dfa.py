@@ -44,9 +44,11 @@ def matches(string: str) -> bool:
 
 for tag in tags:
     add_tag(tag)
+    add_tag(f"/{tag}")
 
 for tag in tags:
     assert matches(f"<{tag}>")
+    assert matches(f"</{tag}>")
     assert not matches(f"{tag}")
     assert not matches(f"<{tag}")
     assert not matches(f"</{tag}")
