@@ -1,4 +1,4 @@
-table: list[dict[str, int]] = [{'<': 1}, {}]
+table: list[dict[str, int]] = [{'<': 2}, {}, {}]
 
 tags = ["a", "abbr", "address", "area", "article", "aside", "audio", "b", "base", "bdi", "bdo",
         "blockquote", "body", "br", "button", "canvas", "caption", "cite", "code", "col", "colgroup", "data",
@@ -12,11 +12,11 @@ tags = ["a", "abbr", "address", "area", "article", "aside", "audio", "b", "base"
         "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u", "ul", "var", "video", "wbr"]
 
 initial_state = 0
-final_states = []
+final_states = [1]
 
 def add_tag(name: str) -> None:
     assert len(name) > 0
-    state = 1
+    state = 2
 
     for i in range(len(name)):
         if name[i] in table[state]:
@@ -27,9 +27,7 @@ def add_tag(name: str) -> None:
         state = len(table)
         table.append({})
 
-    table[state]['>'] = len(table)
-    table.append({})
-    final_states.append(len(table) - 1)
+    table[state]['>'] = 1
 
 def matches(string: str) -> bool:
     state = initial_state
