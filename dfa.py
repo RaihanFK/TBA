@@ -1,13 +1,15 @@
 table: list[dict[str, int]] = [{'<': 1}, {}]
 
-tags = [ "html", "body", "base", "head", "link", "meta", "style", "title", "address", "article", "aside", "footer", "header",
-        "h1", "h2", "h3", "h4", "h5", "h6", "hgroup", "main", "nav", "section", "search", "blockquote", "dd", "div", "dl", "dt",
-        "figcaption", "figure", "hr", "li", "menu", "ol", "p", "pre", "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code",
-        "data", "dfn", "em", "i", "kbd", "mark", "q", "rp", "rt", "ruby", "s", "samp", "small", "span", "strong", "sub", "sup",
-        "time", "u", "var", "wbr", "area", "audio", "img", "map", "track", "video", "embed", "iframe", "object", "picture",
-        "portal", "source", "svg", "math", "canvas", "noscript", "script", "del", "ins", "caption", "col", "colgroup", "table",
-        "tbody", "td", "tfoot", "th", "thead", "tr", "button", "datalist", "fieldset", "form", "input", "label", "legend", "meter",
-        "optgroup", "option", "output", "progress", "select", "textarea", "slot", "template" ]
+tags = ["a", "abbr", "address", "area", "article", "aside", "audio", "b", "base", "bdi", "bdo",
+        "blockquote", "body", "br", "button", "canvas", "caption", "cite", "code", "col", "colgroup", "data",
+        "datalist", "dd", "del", "dfn", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption",
+        "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header",
+        "hgroup", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "label", "legend",
+        "li", "link", "main", "map", "mark", "math", "menu", "meta", "meter", "nav", "noscript",
+        "object", "ol", "optgroup", "option", "output", "p", "picture", "portal", "pre", "progress", "q",
+        "rp", "rt", "ruby", "s", "samp", "script", "search", "section", "select", "slot", "small",
+        "source", "span", "strong", "style", "sub", "sup", "svg", "table", "tbody", "td", "template",
+        "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u", "ul", "var", "video", "wbr"]
 
 initial_state = 0
 final_states = []
