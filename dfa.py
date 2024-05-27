@@ -1,14 +1,11 @@
-table: list[dict[str, int]] = [{}, {}, {}]
+table: list[dict[str, int]] = [{'<': 1}, {}]
 
 initial_state = 0
 final_states = []
 
-table[0]['<'] = 2
-table[1]['/'] = 2
-
 def add_tag(name: str) -> None:
     assert len(name) > 0
-    state = 2
+    state = 1
 
     for i in range(len(name)):
         if name[i] in table[state]:
@@ -36,6 +33,7 @@ def matches(string: str) -> bool:
 
 TAG = add_tag
 TAG("html")
+TAG("a")
 TAG("html5")
 TAG("html35")
 TAG("h1")
