@@ -1,5 +1,14 @@
 table: list[dict[str, int]] = [{'<': 1}, {}]
 
+tags = [ "html", "body", "base", "head", "link", "meta", "style", "title", "address", "article", "aside", "footer", "header",
+        "h1", "h2", "h3", "h4", "h5", "h6", "hgroup", "main", "nav", "section", "search", "blockquote", "dd", "div", "dl", "dt",
+        "figcaption", "figure", "hr", "li", "menu", "ol", "p", "pre", "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code",
+        "data", "dfn", "em", "i", "kbd", "mark", "q", "rp", "rt", "ruby", "s", "samp", "small", "span", "strong", "sub", "sup",
+        "time", "u", "var", "wbr", "area", "audio", "img", "map", "track", "video", "embed", "iframe", "object", "picture",
+        "portal", "source", "svg", "math", "canvas", "noscript", "script", "del", "ins", "caption", "col", "colgroup", "table",
+        "tbody", "td", "tfoot", "th", "thead", "tr", "button", "datalist", "fieldset", "form", "input", "label", "legend", "meter",
+        "optgroup", "option", "output", "progress", "select", "textarea", "slot", "template" ]
+
 initial_state = 0
 final_states = []
 
@@ -31,15 +40,15 @@ def matches(string: str) -> bool:
 
     return state in final_states
 
-TAG = add_tag
-TAG("html")
-TAG("a")
-TAG("html5")
-TAG("html35")
-TAG("h1")
-TAG("p")
-TAG("body")
-TAG("title")
+for tag in tags:
+    add_tag(tag)
+
+for tag in tags:
+    assert matches(f"<{tag}>")
+    assert not matches(f"{tag}")
+    assert not matches(f"<{tag}")
+    assert not matches(f"{tag}>")
+    assert not matches(f"<//{tag}>")
 
 assert not matches("")
 assert not matches("<")
@@ -47,13 +56,9 @@ assert not matches(">")
 assert not matches("<h>")
 
 assert matches("<html>")
+assert not matches("<//html>")
+assert not matches("<///html>")
 assert not matches("<h1tml>")
-
-assert matches("<html5>")
-assert not matches("html5")
-
-assert matches("<html35>")
-assert not matches("html35>html")
 
 assert matches("<h1>")
 assert not matches("<h1")
