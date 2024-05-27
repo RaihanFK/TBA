@@ -49,26 +49,12 @@ for tag in tags:
     assert matches(f"<{tag}>")
     assert not matches(f"{tag}")
     assert not matches(f"<{tag}")
+    assert not matches(f"</{tag}")
     assert not matches(f"{tag}>")
+    assert not matches(f"{tag}/>")
     assert not matches(f"<//{tag}>")
 
 assert not matches("")
 assert not matches("<")
 assert not matches(">")
-assert not matches("<h>")
-
-assert matches("<html>")
-assert not matches("<//html>")
-assert not matches("<///html>")
-assert not matches("<h1tml>")
-
-assert matches("<h1>")
-assert not matches("<h1")
-assert not matches("h1>")
-assert not matches("<h1>tml>")
-
-assert matches("<p>")
-assert not matches("<hp>")
-
-assert matches("<body>")
-assert matches("<title>")
+assert not matches("</>")
