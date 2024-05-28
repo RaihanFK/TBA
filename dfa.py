@@ -57,4 +57,8 @@ for tag in tags:
 assert not matches("")
 assert not matches("<")
 assert not matches(">")
+assert not matches("/")
+assert not matches("</")
+assert not matches("/>")
+assert not matches("<>")
 assert not matches("</>")
