@@ -2,12 +2,20 @@
 
 import sys, dfa, pda
 
-def main():
+def printcc(result: bool) -> None:
+    match result:
+        case True: print("Accepted")
+        case False: print("Declined")
+
+def main() -> None:
     if "--one" in sys.argv:
-        print(dfa.matches(sys.stdin.read().strip()))
-        return
-    
-    print(pda.matches(sys.stdin.read().strip()))
+        result = dfa.matches(sys.stdin.read().strip())
+        printcc(result)
+        exit(0)
+
+    result = pda.matches(sys.stdin.read().strip())
+    printcc(result)
+    exit(0)
 
 if __name__ == "__main__":
     main()

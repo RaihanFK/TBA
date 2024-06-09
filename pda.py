@@ -1,5 +1,4 @@
 import dfa
-from pprint import pprint
 
 def tokenize(html: str) -> list[str]:
     html = html.strip()
@@ -8,9 +7,8 @@ def tokenize(html: str) -> list[str]:
     while html:
         html = html[html.find('<'):]
         tag = html[:html.find('>')+1]
-        tagname = html[1:html.find('>')]
 
-        if not dfa.valid_tag(tagname):
+        if not dfa.matches(tag):
             return []
 
         tokens.append(tag)
@@ -59,54 +57,39 @@ def find_product(alpha: str, token: str) -> list[str]:
     
     return []
 
+def next_alpha(alpha_before: str, product: list[str]):
+    for p in product:
+        if is_alpha(p):
+            return p
+
+    return alpha_before
+
 def matches(html):
     stack = ['#']
-
-    tokens = tokenize(html)
-    if not tokens:
-        return False
-
     alpha = 'S'
     i = 1
 
-    product = find_product(alpha, tokens[0])
-    for p in product:
-        if is_alpha(p):
-            alpha = p
-            break
-    if not product:
-        return False
+    tokens = tokenize(html)
+    if not tokens: return False
 
+    product = find_product(alpha, tokens[0])
+    if not product: return False
+
+    alpha = next_alpha(alpha, product)
     stack.extend(reversed(product[1:]))
 
     while i < len(tokens):
-        # print(tokens[i])
-        # print(alpha)
-        # print(stack)
-        # print()
+        current_str = tokens[i]
+        top = stack.pop()
 
-        if is_alpha(stack[-1]):
-            product = find_product(stack[-1], tokens[i])
-            # print("www:w ", product)
+        if is_alpha(top):
+            product = find_product(top, current_str)
 
-            if product:
-                for p in product:
-                    if is_alpha(p):
-                        alpha = p
-                        break
-
-                stack.pop()
-                stack.extend(reversed(product))
-                continue
-            
-            if has_epsilon(stack[-1]):
-                # discard `alpha`
-                stack.pop()
-
+            if not product and has_epsilon(top):
                 # current / tokens[i] := </h1>
                 # stack               := [... </h1> epsilon
                 #                             ^ should always be it's tag closer
-                if stack.pop() != tokens[i]:
+                if stack.pop() != current_str:
                     return False
                 
                 i += 1
@@ -115,17 +98,19 @@ def matches(html):
             if not product:
                 return False
 
-        if stack[-1] == tokens[i]:
-            stack.pop()
+            alpha = next_alpha(alpha, product)
+            stack.extend(reversed(product))
+            continue
+
+        if top == current_str:
             i += 1
             continue
 
-        product = find_product(alpha, tokens[i])
-        if not product and stack.pop() != tokens[i]:
-            return False
+        product = find_product(alpha, current_str)
+        if not product and top != current_str: return False
 
-        stack.extend(reversed(product))
-        stack.pop()
+        stack.append(top)
+        stack.extend(reversed(product[1:]))
         i += 1
 
     return stack.pop() == '#'
