@@ -1,83 +1,6 @@
 import dfa
 from pprint import pprint
 
-TOKEN_HTML = {
-    "html": 'H1',
-    "/html": 'H2',
-}
-
-TOKEN_BODY = {
-    "body": 'B1',
-    "/body": 'B2',
-}
-
-TOKEN_HEAD = {
-    "head": 'H3',
-    "/head": 'H4',
-}
-
-TOKEN_TITLE = {
-    "title": 'T1',
-    "/title": 'T2',
-}
-
-TOKEN_H1 = {
-    "h1": 'V1',
-    "/h1": 'V2',
-}
-
-TOKEN_P = {
-    "p": 'P1',
-    "/p": 'P2',
-}
-
-stack = ['#', 'R']
-ptokens = [TOKEN_HTML, TOKEN_BODY, TOKEN_HEAD, TOKEN_TITLE, TOKEN_H1, TOKEN_P]
-ptable = {
-    TOKEN_HTML["html"]: {
-        "pop": [],
-        "push": ['H'],
-    },
-    TOKEN_HTML["/html"]: {
-        "pop": ['H', 'R'],
-        "push": [],
-    },
-    TOKEN_HEAD["head"]: {
-        "pop": ['H'],
-        "push": ['H', 'D'],
-    },
-    TOKEN_HEAD["/head"]: {
-        "pop": ['D'],
-        "push": ['D'],
-    },
-    TOKEN_BODY["body"]: {
-        "pop": ['D'],
-        "push": ['B'],
-    },
-    TOKEN_BODY["/body"]: {
-        "pop": ['B'],
-        "push": [],
-    },
-
-    TOKEN_TITLE["title"]: { "pop": ['D'], "push": ['D', 'T'] },
-    TOKEN_TITLE["/title"]: { "pop": ['T'], "push": [] },
-
-    TOKEN_P["p"]: { "pop": ['B'], "push": ['B', 'P'] },
-    TOKEN_P["/p"]: { "pop": ['P'], "push": [] },
-
-    TOKEN_H1["h1"]: { "pop": ['B'], "push": ['B', 'V'] },
-    TOKEN_H1["/h1"]: { "pop": ['V'], "push": [] },
-}
-
-def find_ptoken(name: str) -> str | None:
-    global ptokens
-
-    for tok in ptokens:
-        if name in tok:
-            return tok[name]
-    
-    return None
-
 def tokenize(html: str) -> list[str]:
     def __tokenize_impl(html: str, start=0, end=1) -> tuple[str, str]:
         if end > len(html):
@@ -85,7 +8,7 @@ def tokenize(html: str) -> list[str]:
 
         portion = html[start:end]
         if dfa.matches(portion):
-            return (find_ptoken(portion[1:-1]), html[end-1:])
+            return (portion, html[end-1:])
 
         return __tokenize_impl(html, start, end + 1)
     
@@ -100,32 +23,100 @@ def tokenize(html: str) -> list[str]:
 
     return tokens
 
-# TODO:
+pt = {
+    'S': [
+        ["<html>", 'A', "</html>"]
+    ],
+    'A': [
+        ["<head>", 'B', "</head>", 'C' ],
+        ["<body>", 'D', "</body>"],
+        [""]
+    ],
+    'B': [
+        ["<title>", "</title>"],
+        [""]
+    ],
+    'C': [
+        ["<body>", 'D', "</body>"]
+    ],
+    'D': [
+        ["<h1>", 'D', "</h1>"],
+        ["<p>", 'D', "</p>"],
+        [""]
+    ],
+}
+
+def has_epsilon(alpha: str) -> bool:
+    global pt
+    return pt[alpha][-1][0] == ""
+
 def matches(html):
-    global stack
-    __stack = stack.copy()
+    start = 'S'
+    k = 4
 
     tokens = tokenize(html)
-    for tok in tokens:
-        if tok not in ptable:
-            return False
+    stack = ['#']
 
-        for expected in ptable[tok]["pop"]:
-            if stack.pop() != expected:
+    i = 0
+    found = False
+    for product in pt[start]:
+        if tokens[i][:k] == product[0][:k]:
+            found = True
+            stack.extend(reversed(product))
+            break
+    if not found: return False
+
+    while i < len(tokens):
+        if stack[-1] == tokens[i]:
+            stack.pop()
+            i += 1
+            continue
+
+        if stack[-1] in pt:
+            alpha = stack[-1]
+            found = False
+
+            for product in pt[alpha]:
+                if tokens[i][:k] == product[0][:k]:
+                    found = True
+                    stack.pop()
+                    stack.extend(reversed(product))
+                    break
+            
+            if not found and has_epsilon(alpha):
+                # discard `alpha`
+                stack.pop()
+
+                # current / tokens[i] := </h1>
+                # stack               := [... </h1> epsilon
+                #                             ^ should always be it's tag closer
+                if stack.pop() != tokens[i]:
+                    return False
+                
+                i += 1
+                continue
+            
+            if not found:
                 return False
-        
-        for extended in ptable[tok]["push"]:
-            stack.append(extended)
 
-    accepted = stack.pop() == '#'
-    stack = __stack
-    return accepted
+            continue
 
-print(matches("""<html>
-    <head>
-        <title>Title</title>
-    </head>
-    <body>
-        <p>Paragraph</p>
-    </body>
-</html>"""))
+        found = False
+        for alpha, productions in pt.items():
+            for product in productions:
+                if tokens[i][:k] == product[0][:k]:
+                    found = True
+                    stack.extend(reversed(product))
+                    break
+            
+            if found:
+                break
+
+    return stack.pop() == '#'
+
+for n, expected in enumerate([True, False, True, False, False, False], start=1):
+    with open(f"html/{n}.html", "r") as f:
+        html = f.read()
+        f.close()
+
+        assert matches(html) == expected
