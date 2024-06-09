@@ -59,14 +59,14 @@ ptable = {
         "push": [],
     },
 
-    TOKEN_TITLE["title"]: { "pop": [], "push": [] },
-    TOKEN_TITLE["/title"]: { "pop": [], "push": [] },
+    TOKEN_TITLE["title"]: { "pop": ['D'], "push": ['D', 'T'] },
+    TOKEN_TITLE["/title"]: { "pop": ['T'], "push": [] },
 
-    TOKEN_P["p"]: { "pop": [], "push": [] },
-    TOKEN_P["/p"]: { "pop": [], "push": [] },
+    TOKEN_P["p"]: { "pop": ['B'], "push": ['B', 'P'] },
+    TOKEN_P["/p"]: { "pop": ['P'], "push": [] },
 
-    TOKEN_A["a"]: { "pop": [], "push": [] },
-    TOKEN_A["/a"]: { "pop": [], "push": [] },
+    TOKEN_A["a"]: { "pop": ['B'], "push": ['B', 'A'] },
+    TOKEN_A["/a"]: { "pop": ['A'], "push": [] },
 }
 
 def find_ptoken(name: str) -> str | None:
