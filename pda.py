@@ -2,24 +2,19 @@ import dfa
 from pprint import pprint
 
 def tokenize(html: str) -> list[str]:
-    def __tokenize_impl(html: str, start=0, end=1) -> tuple[str, str]:
-        if end > len(html):
-            return (dfa.TOKEN_NONE, html)
-
-        portion = html[start:end]
-        if dfa.matches(portion):
-            return (portion, html[end-1:])
-
-        return __tokenize_impl(html, start, end + 1)
-    
+    html = html.strip()
     tokens = []
 
     while html:
-        token, html = __tokenize_impl(html)
-        html = html[1:]
+        html = html[html.find('<'):]
+        tag = html[:html.find('>')+1]
+        tagname = html[1:html.find('>')]
 
-        if token:
-            tokens.append(token)
+        if not dfa.valid_tag(tagname):
+            return []
+
+        tokens.append(tag)
+        html = html[html.find('>')+1:]
 
     return tokens
 
@@ -54,8 +49,11 @@ def matches(html):
     start = 'S'
     k = 4
 
-    tokens = tokenize(html)
     stack = ['#']
+    tokens = tokenize(html)
+
+    if not tokens:
+        return False
 
     i = 0
     found = False

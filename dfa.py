@@ -16,6 +16,13 @@ tnames = ["a", "abbr", "address", "area", "article", "aside", "audio", "b", "bas
 
 tnames = ["html", "head", "title", "body", "p", "h1"]
 
+def valid_tag(tag):
+    for tagname in tnames:
+        if tag == tagname or tag == f"/{tagname}":
+            return True
+
+    return False
+
 initial_state = 0
 final_states = [1]
 
@@ -44,19 +51,23 @@ def get_tag_token(tags: list[dict[str, str]], name: str) -> str:
     return TOKEN_NONE
 
 def add_tag(name: str) -> None:
-    assert len(name) > 0
-    state = 2
+    def __add_tag_impl(name: str):
+        assert len(name) > 0
+        state = 2
 
-    for i in range(len(name)):
-        if name[i] in table[state]:
-            state = table[state][name[i]]
-            continue
-        
-        table[state][name[i]] = len(table)
-        state = len(table)
-        table.append({})
+        for i in range(len(name)):
+            if name[i] in table[state]:
+                state = table[state][name[i]]
+                continue
+            
+            table[state][name[i]] = len(table)
+            state = len(table)
+            table.append({})
 
-    table[state]['>'] = 1
+        table[state]['>'] = 1
+    
+    __add_tag_impl(name)
+    __add_tag_impl(f"/{name}")
 
 def matches(string: str) -> bool:
     state = initial_state
@@ -73,7 +84,6 @@ tags = generate_tags(tnames)
 
 for tag in tags:
     add_tag(tag["name"])
-    add_tag(f"/{tag["name"]}")
 
 for tag in tags:
     assert matches(f"<{tag["name"]}>")
