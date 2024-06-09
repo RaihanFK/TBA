@@ -48,16 +48,16 @@ ptable = {
     },
     TOKEN_HEAD["/head"]: {
         "pop": ['D'],
+        "push": ['D'],
+    },
+    TOKEN_BODY["body"]: {
+        "pop": ['D'],
+        "push": ['B'],
+    },
+    TOKEN_BODY["/body"]: {
+        "pop": ['B'],
         "push": [],
     },
-    # TOKEN_BODY["body"]: {
-    #     "pop": [],
-    #     "push": [],
-    # },
-    # TOKEN_BODY["/body"]: {
-    #     "pop": [],
-    #     "push": [],
-    # },
 
     TOKEN_TITLE["title"]: { "pop": [], "push": [] },
     TOKEN_TITLE["/title"]: { "pop": [], "push": [] },
@@ -106,8 +106,6 @@ def matches(html):
     __stack = stack.copy()
 
     tokens = tokenize(html)
-    print(tokens)
-
     for tok in tokens:
         if tok not in ptable:
             return False
@@ -125,7 +123,9 @@ def matches(html):
 
 print(matches("""<html>
     <head>
-        <title>
-        </title>
+        <title>Title</title>
     </head>
+    <body>
+        <p>Paragraph</p>
+    </body>
 </html>"""))
