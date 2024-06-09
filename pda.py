@@ -56,42 +56,32 @@ def find_product(alpha: str, token: str) -> list[str]:
     
     return []
 
+def next_alpha(alpha_before: str, product: list[str]):
+    for p in product:
+        if is_alpha(p):
+            return p
+
+    return alpha_before
+
 def matches(html):
     stack = ['#']
-
-    tokens = tokenize(html)
-    if not tokens:
-        return False
-
     alpha = 'S'
     i = 1
 
-    product = find_product(alpha, tokens[0])
-    for p in product:
-        if is_alpha(p):
-            alpha = p
-            break
-    if not product:
-        return False
+    tokens = tokenize(html)
+    if not tokens: return False
 
+    product = find_product(alpha, tokens[0])
+    if not product: return False
+
+    alpha = next_alpha(alpha, product)
     stack.extend(reversed(product[1:]))
 
     while i < len(tokens):
         if is_alpha(stack[-1]):
             product = find_product(stack[-1], tokens[i])
 
-            if product:
-                for p in product:
-                    if is_alpha(p):
-                        alpha = p
-                        break
-
-                stack.pop()
-                stack.extend(reversed(product))
-                continue
-            
-            if has_epsilon(stack[-1]):
-                # discard `alpha`
+            if not product and has_epsilon(stack[-1]):
                 stack.pop()
 
                 # current / tokens[i] := </h1>
@@ -103,7 +93,13 @@ def matches(html):
                 i += 1
                 continue
 
-            return False
+            if not product:
+                return False
+
+            alpha = next_alpha(alpha, product)
+            stack.pop()
+            stack.extend(reversed(product))
+            continue
 
         if stack[-1] == tokens[i]:
             stack.pop()
