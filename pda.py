@@ -78,16 +78,17 @@ def matches(html):
     stack.extend(reversed(product[1:]))
 
     while i < len(tokens):
+        current_str = tokens[i]
         top = stack.pop()
 
         if is_alpha(top):
-            product = find_product(top, tokens[i])
+            product = find_product(top, current_str)
 
             if not product and has_epsilon(top):
                 # current / tokens[i] := </h1>
                 # stack               := [... </h1> epsilon
                 #                             ^ should always be it's tag closer
-                if stack.pop() != tokens[i]:
+                if stack.pop() != current_str:
                     return False
                 
                 i += 1
@@ -100,12 +101,12 @@ def matches(html):
             stack.extend(reversed(product))
             continue
 
-        if top == tokens[i]:
+        if top == current_str:
             i += 1
             continue
 
-        product = find_product(alpha, tokens[i])
-        if not product and top != tokens[i]: return False
+        product = find_product(alpha, current_str)
+        if not product and top != current_str: return False
 
         stack.append(top)
         stack.extend(reversed(product[1:]))
