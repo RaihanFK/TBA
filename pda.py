@@ -78,14 +78,8 @@ def matches(html):
     stack.extend(reversed(product[1:]))
 
     while i < len(tokens):
-        # print(tokens[i])
-        # print(alpha)
-        # print(stack)
-        # print()
-
         if is_alpha(stack[-1]):
             product = find_product(stack[-1], tokens[i])
-            # print("www:w ", product)
 
             if product:
                 for p in product:
@@ -110,8 +104,7 @@ def matches(html):
                 i += 1
                 continue
 
-            if not product:
-                return False
+            return False
 
         if stack[-1] == tokens[i]:
             stack.pop()
@@ -122,8 +115,7 @@ def matches(html):
         if not product and stack.pop() != tokens[i]:
             return False
 
-        stack.extend(reversed(product))
-        stack.pop()
+        stack.extend(reversed(product[1:]))
         i += 1
 
     return stack.pop() == '#'
