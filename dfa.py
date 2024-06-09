@@ -14,7 +14,7 @@ tnames = ["a", "abbr", "address", "area", "article", "aside", "audio", "b", "bas
         "source", "span", "strong", "style", "sub", "sup", "svg", "table", "tbody", "td", "template",
         "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u", "ul", "var", "video", "wbr"]
 
-tnames = ["button", "html"]
+tnames = ["html", "head", "title", "body", "p", "a"]
 
 initial_state = 0
 final_states = [1]
