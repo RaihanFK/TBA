@@ -1,5 +1,4 @@
 import dfa
-from pprint import pprint
 
 def tokenize(html: str) -> list[str]:
     html = html.strip()
