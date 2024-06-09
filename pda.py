@@ -45,43 +45,60 @@ def has_epsilon(alpha: str) -> bool:
     global pt
     return pt[alpha][-1][0] == ""
 
+def is_alpha(x: str) -> bool:
+    global pt
+    return x in pt
+
+def find_product(alpha: str, token: str) -> list[str]:
+    global pt
+
+    for product in pt[alpha]:
+        if product[0] == token:
+            return product
+    
+    return []
+
 def matches(html):
-    start = 'S'
-    k = 4
-
     stack = ['#']
-    tokens = tokenize(html)
 
+    tokens = tokenize(html)
     if not tokens:
         return False
 
-    i = 0
-    found = False
-    for product in pt[start]:
-        if tokens[i][:k] == product[0][:k]:
-            found = True
-            stack.extend(reversed(product))
+    alpha = 'S'
+    i = 1
+
+    product = find_product(alpha, tokens[0])
+    for p in product:
+        if is_alpha(p):
+            alpha = p
             break
-    if not found: return False
+    if not product:
+        return False
+
+    stack.extend(reversed(product[1:]))
 
     while i < len(tokens):
-        if stack[-1] == tokens[i]:
-            stack.pop()
-            i += 1
-            continue
+        # print(tokens[i])
+        # print(alpha)
+        # print(stack)
+        # print()
 
-        if stack[-1] in pt:
-            alpha = stack[-1]
-            found = False
+        if is_alpha(stack[-1]):
+            product = find_product(stack[-1], tokens[i])
+            # print("www:w ", product)
 
-            for product in pt[alpha]:
-                if tokens[i][:k] == product[0][:k]:
-                    found = True
-                    stack.pop()
-                    stack.extend(reversed(product))
-                    break
+            if product:
+                for p in product:
+                    if is_alpha(p):
+                        alpha = p
+                        break
+
+                stack.pop()
+                stack.extend(reversed(product))
+                continue
             
-            if not found and has_epsilon(alpha):
+            if has_epsilon(stack[-1]):
                 # discard `alpha`
                 stack.pop()
 
@@ -93,22 +110,22 @@ def matches(html):
                 
                 i += 1
                 continue
-            
-            if not found:
+
+            if not product:
                 return False
 
+        if stack[-1] == tokens[i]:
+            stack.pop()
+            i += 1
             continue
 
-        found = False
-        for alpha, productions in pt.items():
-            for product in productions:
-                if tokens[i][:k] == product[0][:k]:
-                    found = True
-                    stack.extend(reversed(product))
-                    break
-            
-            if found:
-                break
+        product = find_product(alpha, tokens[i])
+        if not product and stack.pop() != tokens[i]:
+            return False
+
+        stack.extend(reversed(product))
+        stack.pop()
+        i += 1
 
     return stack.pop() == '#'
 
