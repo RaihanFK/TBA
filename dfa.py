@@ -13,13 +13,6 @@ tags = ["a", "abbr", "address", "area", "article", "aside", "audio", "b", "base"
 
 tags = ["html", "head", "title", "body", "p", "h1"]
 
-def valid_tag(tag):
-    for tagname in tags:
-        if tag == tagname or tag == f"/{tagname}":
-            return True
-
-    return False
-
 initial_state = 0
 final_states = [1]
 

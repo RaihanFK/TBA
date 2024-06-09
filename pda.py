@@ -7,9 +7,8 @@ def tokenize(html: str) -> list[str]:
     while html:
         html = html[html.find('<'):]
         tag = html[:html.find('>')+1]
-        tagname = html[1:html.find('>')]
 
-        if not dfa.valid_tag(tagname):
+        if not dfa.matches(tag):
             return []
 
         tokens.append(tag)
