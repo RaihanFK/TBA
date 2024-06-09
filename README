@@ -1,0 +1,12 @@
+tba
+===
+
+Toy html structure validator.
+
+Quick Start
+-----------
+
+Recognize either a full structure or a single tag:
+
+    python tba.py < html/1.html
+    echo "<html>" | python tba.py --one
