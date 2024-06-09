@@ -21,9 +21,9 @@ TOKEN_TITLE = {
     "/title": 'T2',
 }
 
-TOKEN_A = {
-    "a": 'A1',
-    "/a": 'A2',
+TOKEN_H1 = {
+    "h1": 'V1',
+    "/h1": 'V2',
 }
 
 TOKEN_P = {
@@ -32,7 +32,7 @@ TOKEN_P = {
 }
 
 stack = ['#', 'R']
-ptokens = [TOKEN_HTML, TOKEN_BODY, TOKEN_HEAD, TOKEN_TITLE, TOKEN_A, TOKEN_P]
+ptokens = [TOKEN_HTML, TOKEN_BODY, TOKEN_HEAD, TOKEN_TITLE, TOKEN_H1, TOKEN_P]
 ptable = {
     TOKEN_HTML["html"]: {
         "pop": [],
@@ -65,8 +65,8 @@ ptable = {
     TOKEN_P["p"]: { "pop": ['B'], "push": ['B', 'P'] },
     TOKEN_P["/p"]: { "pop": ['P'], "push": [] },
 
-    TOKEN_A["a"]: { "pop": ['B'], "push": ['B', 'A'] },
-    TOKEN_A["/a"]: { "pop": ['A'], "push": [] },
+    TOKEN_H1["h1"]: { "pop": ['B'], "push": ['B', 'V'] },
+    TOKEN_H1["/h1"]: { "pop": ['V'], "push": [] },
 }
 
 def find_ptoken(name: str) -> str | None:
