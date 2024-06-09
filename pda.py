@@ -85,7 +85,7 @@ def tokenize(html: str) -> list[str]:
 
         portion = html[start:end]
         if dfa.matches(portion):
-            return (find_ptoken(portion[1:-1]), html[end:])
+            return (find_ptoken(portion[1:-1]), html[end-1:])
 
         return __tokenize_impl(html, start, end + 1)
     
