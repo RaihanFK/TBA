@@ -64,7 +64,7 @@ def next_alpha(alpha_before: str, product: list[str]):
 
     return alpha_before
 
-def matches(html):
+def matches(html: str) -> bool:
     stack = ['#']
     alpha = 'S'
     i = 1
@@ -115,7 +115,7 @@ def matches(html):
 
     return stack.pop() == '#'
 
-for n, expected in enumerate([True, False, True, False, False, False], start=1):
+for n, expected in enumerate([True, False, True, False, False, False, True, True], start=1):
     with open(f"html/{n}.html", "r") as f:
         html = f.read()
         f.close()
