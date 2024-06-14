@@ -40,9 +40,16 @@ pt = {
     ],
 }
 
+pt_initial_alpha = 'S'
+
 def has_epsilon(alpha: str) -> bool:
     global pt
-    return pt[alpha][-1][0] == ""
+
+    for prod in pt[alpha]:
+        if prod[0] == "":
+            return True
+
+    return False
 
 def is_alpha(x: str) -> bool:
     global pt
@@ -54,64 +61,49 @@ def find_product(alpha: str, token: str) -> list[str]:
     for product in pt[alpha]:
         if product[0] == token:
             return product
-    
+
     return []
 
-def next_alpha(alpha_before: str, product: list[str]):
+def next_alpha(alpha_before: str, product: list[str]) -> str:
     for p in product:
         if is_alpha(p):
             return p
 
     return alpha_before
 
-def matches(html: str) -> bool:
-    stack = ['#']
-    alpha = 'S'
-    i = 1
+def push_product(stack: list[str], product: list[str]) -> None:
+    for p in product[::-1]:
+        stack.append(p)
 
+def matches(html: str) -> bool:
     tokens = tokenize(html)
     if not tokens: return False
 
-    product = find_product(alpha, tokens[0])
-    if not product: return False
-
-    alpha = next_alpha(alpha, product)
-    stack.extend(reversed(product[1:]))
+    alpha = pt_initial_alpha
+    stack = ['#', alpha]
+    i = 0
 
     while i < len(tokens):
-        current_str = tokens[i]
+        tok = tokens[i]
         top = stack.pop()
 
         if is_alpha(top):
-            product = find_product(top, current_str)
-
-            if not product and has_epsilon(top):
-                # current / tokens[i] := </h1>
-                # stack               := [... </h1> epsilon
-                #                             ^ should always be it's tag closer
-                if stack.pop() != current_str:
-                    return False
-                
-                i += 1
-                continue
-
-            if not product:
-                return False
-
+            product = find_product(top, tok)
             alpha = next_alpha(alpha, product)
-            stack.extend(reversed(product))
+            push_product(stack, product)
+
+            if not product and not has_epsilon(top): return False
             continue
 
-        if top == current_str:
+        if top == tok:
             i += 1
             continue
 
-        product = find_product(alpha, current_str)
-        if not product and top != current_str: return False
+        product = find_product(alpha, tok)
+        if not product and top != tok: return False
 
         stack.append(top)
-        stack.extend(reversed(product[1:]))
-        i += 1
+        push_product(stack, product)
 
     return stack.pop() == '#'
 
