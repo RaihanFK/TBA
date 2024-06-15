@@ -34,13 +34,11 @@ pt = {
         [""]
     ],
     'D': [
-        ["<h1>", 'D', "</h1>"],
-        ["<p>", 'D', "</p>"],
+        ["<h1>", 'D', "</h1>", 'D'],
+        ["<p>", 'D', "</p>", 'D'],
         [""]
     ],
 }
-
-pt_initial_alpha = 'S'
 
 def has_epsilon(alpha: str) -> bool:
     global pt
@@ -64,13 +62,6 @@ def find_product(alpha: str, token: str) -> list[str]:
 
     return []
 
-def next_alpha(alpha_before: str, product: list[str]) -> str:
-    for p in product:
-        if is_alpha(p):
-            return p
-
-    return alpha_before
-
 def push_product(stack: list[str], product: list[str]) -> None:
     for p in product[::-1]:
         stack.append(p)
@@ -78,8 +69,7 @@ def push_product(stack: list[str], product: list[str]) -> None:
 def matches(html: str) -> bool:
     tokens = tokenize(html)
 
-    alpha = pt_initial_alpha
-    stack = ['#', alpha]
+    stack = ['#', 'S']
     i = 0
 
     while i < len(tokens):
@@ -88,21 +78,13 @@ def matches(html: str) -> bool:
 
         if is_alpha(top):
             product = find_product(top, tok)
-            alpha = next_alpha(alpha, product)
             push_product(stack, product)
 
             if not product and not has_epsilon(top): return False
             continue
 
-        if top == tok:
-            i += 1
-            continue
-
-        product = find_product(alpha, tok)
-        if not product: return False
-
-        stack.append(top)
-        push_product(stack, product)
+        if top != tok: return False
+        i += 1
 
     return stack.pop() == '#'
 
