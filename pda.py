@@ -77,7 +77,6 @@ def push_product(stack: list[str], product: list[str]) -> None:
 
 def matches(html: str) -> bool:
     tokens = tokenize(html)
-    if not tokens: return False
 
     alpha = pt_initial_alpha
     stack = ['#', alpha]
@@ -100,7 +99,7 @@ def matches(html: str) -> bool:
             continue
 
         product = find_product(alpha, tok)
-        if not product and top != tok: return False
+        if not product: return False
 
         stack.append(top)
         push_product(stack, product)
